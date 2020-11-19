@@ -25,8 +25,8 @@ const dat = require("dat.gui");
 const Stats = require("stats.js");
 const { drawBoundingBox, drawKeypoints, drawSkeleton } = require("./demo_util");
 
-const videoWidth = 600;
-const videoHeight = 500;
+const videoWidth = 150;
+const videoHeight = 150;
 const stats = new Stats();
 
 function isAndroid() {
@@ -252,7 +252,7 @@ function detectPoseInRealTime(video) {
 	async function poseDetectionFrame() {
 		stats.begin();
 
-    var data = ctx.getImageData(0, 0, 200, 200);
+    var data = ctx.getImageData(0, 0, videoWidth, videoHeight);
 
     var mydata = {
       "reds": new Array(data.data.length / 4),

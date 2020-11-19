@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 87.0, 652.0, 779.0 ],
+		"rect" : [ 34.0, 87.0, 1117.0, 779.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -127,7 +127,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
-					"patching_rect" : [ 469.0, 171.5, 153.0, 134.0 ]
+					"patching_rect" : [ 635.0, 348.5, 455.0, 395.0 ]
 				}
 
 			}
@@ -139,7 +139,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "jit_matrix", "" ],
 					"patching_rect" : [ 420.0, 314.0, 213.0, 22.0 ],
-					"text" : "jit.matrix @name blah2 @dim 200 200"
+					"text" : "jit.matrix @name blah2 @dim 150 150"
 				}
 
 			}
@@ -712,7 +712,7 @@
  ],
 		"dependency_cache" : [ 			{
 				"name" : "index.js",
-				"bootpath" : "~/Downloads/n4m-posenet-master",
+				"bootpath" : "~/Downloads/webrtc-to-max-main",
 				"patcherrelativepath" : ".",
 				"type" : "TEXT",
 				"implicit" : 1
