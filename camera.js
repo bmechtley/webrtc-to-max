@@ -254,18 +254,13 @@ function detectPoseInRealTime(video) {
 
     var data = ctx.getImageData(0, 0, videoWidth, videoHeight);
 
-    var mydata = {
-      "reds": new Array(data.data.length / 4),
-      "greens": new Array(data.data.length / 4),
-      "blues": new Array(data.data.length / 4)
-    };
-    var j = 0;
-    for (var i = 0; i < data.data.length; i+=4) {
-      mydata.reds[j] = data.data[i];
-      mydata.greens[j] = data.data[i+1];
-      mydata.blues[j] = data.data[i+2];
-      j++;
+    var asciiArr = ""
+    for (var i = 0; i < data.data.length; i+=1) {
+      zeroFilled = ('000' + data.data[i]).substr(-3)
+      asciiArr+=zeroFilled;
     }
+    console.log(asciiArr);
+
 
 		ctx.clearRect(0, 0, videoWidth, videoHeight);
 
@@ -277,7 +272,7 @@ function detectPoseInRealTime(video) {
 			ctx.restore();
 		}
 
-		sendToMaxPatch(JSON.stringify(mydata));
+		sendToMaxPatch(asciiArr);
 		stats.end();
 
 		requestAnimationFrame(poseDetectionFrame);

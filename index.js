@@ -13,8 +13,32 @@ io.on("connection", (socket) => {
 
 	socket.on("dispatch", (data) => {
 
-		var mydata = JSON.parse(data);
-		MaxAPI.outlet(mydata);
+		//var mydata = JSON.parse(data);
+	//	MaxAPI.outlet(mydata);
+	//data = data.split(",")
+	MaxAPI.post(data.length, data)
+
+
+
+	var mydata = {
+		"reds": [],
+		"greens": [],
+		"blues": []
+	};
+
+	var j = 0;
+	for (var i = 0; i < data.length; i+=12) {
+		mydata.reds[j] = parseInt(data.substring(i, i+3))
+		mydata.greens[j] = parseInt(data.substring(i+4, i+6))
+		mydata.blues[j] = parseInt(data.substring(i+7, i+9))
+		j++;
+	}
+
+	MaxAPI.outlet(mydata)
+//	MaxAPI.post(mydata)
+
+
+
 		/*
 		MaxAPI.outlet("0 " + mydata.reds.split(' '));
 		MaxAPI.outlet("1 " + mydata.greens.split(' '));
