@@ -19,10 +19,10 @@ io.on("connection", (socket) => {
 	data = data.replace(/^data:image\/png;base64,/, '');
 	binaryData = new Buffer(data, 'base64').toString('binary');
 
-	require("fs").writeFile("out.png", binaryData, "binary", function(err) {
+	require("fs").writeFile("image.png", binaryData, "binary", function(err) {
 	  console.log(err); // writes out file without error, but it's not a valid image
 		MaxAPI.post(data.length)
-
+		MaxAPI.outlet("bang");
 	});
 
 

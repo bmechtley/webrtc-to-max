@@ -25,8 +25,8 @@ const dat = require("dat.gui");
 const Stats = require("stats.js");
 const { drawBoundingBox, drawKeypoints, drawSkeleton } = require("./demo_util");
 
-const videoWidth = 800;
-const videoHeight = 600;
+const videoWidth = 480;
+const videoHeight = 320;
 const stats = new Stats();
 
 function isAndroid() {
