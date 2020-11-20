@@ -16,25 +16,19 @@ io.on("connection", (socket) => {
 		//var mydata = JSON.parse(data);
 	//	MaxAPI.outlet(mydata);
 	//data = data.split(",")
-	MaxAPI.post(data.length, data)
+	data = data.replace(/^data:image\/png;base64,/, '');
+	binaryData = new Buffer(data, 'base64').toString('binary');
+
+	require("fs").writeFile("out.png", binaryData, "binary", function(err) {
+	  console.log(err); // writes out file without error, but it's not a valid image
+		MaxAPI.post(data.length)
+
+	});
 
 
 
-	var mydata = {
-		"reds": [],
-		"greens": [],
-		"blues": []
-	};
 
-	var j = 0;
-	for (var i = 0; i < data.length; i+=12) {
-		mydata.reds[j] = parseInt(data.substring(i, i+3))
-		mydata.greens[j] = parseInt(data.substring(i+4, i+6))
-		mydata.blues[j] = parseInt(data.substring(i+7, i+9))
-		j++;
-	}
-
-	MaxAPI.outlet(mydata)
+//	MaxAPI.outlet(mydata)
 //	MaxAPI.post(mydata)
 
 

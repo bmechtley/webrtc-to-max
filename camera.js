@@ -25,8 +25,8 @@ const dat = require("dat.gui");
 const Stats = require("stats.js");
 const { drawBoundingBox, drawKeypoints, drawSkeleton } = require("./demo_util");
 
-const videoWidth = 150;
-const videoHeight = 150;
+const videoWidth = 800;
+const videoHeight = 600;
 const stats = new Stats();
 
 function isAndroid() {
@@ -252,14 +252,8 @@ function detectPoseInRealTime(video) {
 	async function poseDetectionFrame() {
 		stats.begin();
 
-    var data = ctx.getImageData(0, 0, videoWidth, videoHeight);
+    var data = canvas.toDataURL();
 
-    var asciiArr = ""
-    for (var i = 0; i < data.data.length; i+=1) {
-      zeroFilled = ('000' + data.data[i]).substr(-3)
-      asciiArr+=zeroFilled;
-    }
-    console.log(asciiArr);
 
 
 		ctx.clearRect(0, 0, videoWidth, videoHeight);
@@ -272,7 +266,7 @@ function detectPoseInRealTime(video) {
 			ctx.restore();
 		}
 
-		sendToMaxPatch(asciiArr);
+		sendToMaxPatch(data);
 		stats.end();
 
 		requestAnimationFrame(poseDetectionFrame);
