@@ -16,6 +16,10 @@
  */
 const SocketIOClient = require("socket.io-client");
 const io = new SocketIOClient("http://localhost:3000");
+const dgram = require('dgram')
+const dgramsocket = dgram.createSocket('udp4');
+//dgramsocket.connect(9998, '127.0.0.1')
+
 const socket = io.connect();
 socket.on("connect", () => {
 	console.log("Connected to Max 8");
@@ -25,8 +29,11 @@ const dat = require("dat.gui");
 const Stats = require("stats.js");
 const { drawBoundingBox, drawKeypoints, drawSkeleton } = require("./demo_util");
 
-const videoWidth = 480;
-const videoHeight = 320;
+const videoWidth = 640;
+const videoHeight = 480;
+var min_interval = 100;
+var oldtime = 0;
+var frame = 0;
 const stats = new Stats();
 
 function isAndroid() {
@@ -42,7 +49,21 @@ function isMobile() {
 }
 
 function sendToMaxPatch(poses) {
-	socket.emit("dispatch", poses);
+  frame ++;
+
+  for (var i = 0; i < poses.length; i += (500 * 4)) {
+    var a = poses.slice(i, i + (500 * 4));
+    var b = [Math.floor((i % (videoWidth * 4)) / 4), Math.floor(i / (videoWidth * 4))];
+    console.log(b);
+    dgramsocket.send(
+      Buffer.from(b.concat(a).join(',')),
+      9998,
+      'localhost', err => {
+        //console.log(err);
+        //dgramsocket.close();
+      }
+    );
+  }
 }
 
 /**
@@ -252,10 +273,7 @@ function detectPoseInRealTime(video) {
 	async function poseDetectionFrame() {
 		stats.begin();
 
-    var data = canvas.toDataURL();
-
-
-
+    var data = ctx.getImageData(0, 0, canvas.width, canvas.height);
 		ctx.clearRect(0, 0, videoWidth, videoHeight);
 
 		if (guiState.output.showVideo) {
@@ -266,7 +284,11 @@ function detectPoseInRealTime(video) {
 			ctx.restore();
 		}
 
-		sendToMaxPatch(data);
+    var newtime = new Date().getTime();
+    if (newtime - oldtime >= min_interval) {
+      sendToMaxPatch(data.data);
+      oldtime = newtime;
+    }
 		stats.end();
 
 		requestAnimationFrame(poseDetectionFrame);

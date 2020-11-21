@@ -7,44 +7,75 @@ const io = require("socket.io")();
 const electron = require("electron");
 const proc = require("child_process");
 const child = proc.spawn(electron, ["."]);
+const dgram = require('dgram')
+const dsocket = dgram.createSocket('udp4');
+
+
+dsocket.on('message', (msg, rinfo) => {
+	var data = msg.toString('utf8').split(',').map(a => parseInt(a));
+	offsetx = data[0];
+	offsety = data[1];
+	data = data.slice(2, data.length);
+
+	var pixels = data.length / 4;
+	var d = {
+		reds: new Array(pixels),
+		greens: new Array(pixels),
+		blues: new Array(pixels),
+		x: offsetx,
+		y: offsety
+	};
+
+	for (var i = 0; i < data.length; i += 4) {
+		d.reds[Math.floor(i / 4)] = data[i];
+		d.greens[Math.floor(i / 4)] = data[i+1];
+		d.blues[Math.floor(i / 4)] = data[i+2];
+	}
+
+	MaxAPI.outlet(d);
+});
+
+dsocket.on('listening', () => {
+  const address = dsocket.address();
+  console.log(`server listening ${address.address}:${address.port}`);
+});
+
+dsocket.on('error', (err) => {
+  console.log(`server error:\n${err.stack}`);
+  dsocket.close();
+});
+
+dsocket.bind({
+	address: 'localhost',
+	port: 9998
+});
+
+//const dgramserver
+var stored_data = "";
+var frame = 0;
 
 io.on("connection", (socket) => {
 	console.log("Socket is connected with Electron App");
 
-	socket.on("dispatch", (data) => {
-
-		//var mydata = JSON.parse(data);
-	//	MaxAPI.outlet(mydata);
-	//data = data.split(",")
-	data = data.replace(/^data:image\/png;base64,/, '');
-	binaryData = new Buffer(data, 'base64').toString('binary');
-
-	require("fs").writeFile("image.png", binaryData, "binary", function(err) {
-	  console.log(err); // writes out file without error, but it's not a valid image
-		MaxAPI.post(data.length)
-		MaxAPI.outlet("bang");
+	socket.on("dispatch", data => {
+		data = data.split(' ');
+		frame++;
+		console.log(frame, data.length);
+		  /*
+			require("fs").writeFile("image.png", new Buffer(
+				data.replace(/^data:image\/png;base64,/, ''), 'base64'
+			).toString('binary'), "binary", function(err) {
+				MaxAPI.outlet("image.png");
+			});
+			*/
 	});
-
-
-
-
-//	MaxAPI.outlet(mydata)
-//	MaxAPI.post(mydata)
-
-
-
-		/*
-		MaxAPI.outlet("0 " + mydata.reds.split(' '));
-		MaxAPI.outlet("1 " + mydata.greens.split(' '));
-		MaxAPI.outlet("2 " + mydata.blues.split(' '));*/
-	});
-
 });
 
-io.listen(3000);
+//io.listen(3000);
 
 // This will ensure that when this parent process is killed in maxpat (either by `node.script stop` or Max is shutdown for some reason),
 // it will terminate the child process, the Electron app.
 process.on("exit", () => {
 	child.kill();
+	dsocket.close();
 });
